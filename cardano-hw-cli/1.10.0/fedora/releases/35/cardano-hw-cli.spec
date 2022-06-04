@@ -37,7 +37,7 @@ sed -i '2 i \ \ "commit":"'%{commit}'",' _package.json
 yarn install
 yarn run build-js
 yarn nexe --build --empty
-yarn nexe ./dist/index.js -o cardano-hw-cli --verbose
+yarn nexe ./dist/index.js -o cardano-hw-cli --build --verbose
 
 
 %install
