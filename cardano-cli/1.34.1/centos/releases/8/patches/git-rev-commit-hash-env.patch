@@ -1,0 +1,62 @@
+diff -urN cardano-node-o/cardano-git-rev/cardano-git-rev.cabal cardano-node-new/cardano-git-rev/cardano-git-rev.cabal
+--- cardano-node-o/cardano-git-rev/cardano-git-rev.cabal	2022-06-03 12:21:22.520642544 +0200
++++ cardano-node-new/cardano-git-rev/cardano-git-rev.cabal	2022-06-03 12:17:44.164812845 +0200
+@@ -36,6 +36,7 @@
+ 
+   exposed-modules:      Cardano.Git.Rev
+                         Cardano.Git.RevFromGit
++                        Cardano.Git.RevFromEnv
+ 
+   build-depends:        cardano-prelude
+                       , file-embed
+diff -urN cardano-node-o/cardano-git-rev/src/Cardano/Git/RevFromEnv.hs cardano-node-new/cardano-git-rev/src/Cardano/Git/RevFromEnv.hs
+--- cardano-node-o/cardano-git-rev/src/Cardano/Git/RevFromEnv.hs	1970-01-01 01:00:00.000000000 +0100
++++ cardano-node-new/cardano-git-rev/src/Cardano/Git/RevFromEnv.hs	2022-06-03 12:16:41.254574128 +0200
+@@ -0,0 +1,18 @@
++module Cardano.Git.RevFromEnv
++  ( gitRevFromEnv
++  ) where
++
++import           Cardano.Prelude
++
++import            System.Environment (lookupEnv)
++
++import qualified Language.Haskell.TH as TH
++
++gitRevFromEnv :: TH.Q TH.Exp
++gitRevFromEnv = TH.LitE . TH.StringL <$> TH.runIO (do
++      rev <- lookupEnv "CN_GIT_COMMIT_REV"
++      case rev of {
++        Just hash -> return hash;
++        _         -> return "";
++      }
++    )
+diff -urN cardano-node-o/cardano-git-rev/src/Cardano/Git/Rev.hs cardano-node-new/cardano-git-rev/src/Cardano/Git/Rev.hs
+--- cardano-node-o/cardano-git-rev/src/Cardano/Git/Rev.hs	2022-06-03 12:21:22.520642544 +0200
++++ cardano-node-new/cardano-git-rev/src/Cardano/Git/Rev.hs	2022-06-03 12:17:24.701738989 +0200
+@@ -12,11 +12,13 @@
+ import qualified Data.Text as T
+ 
+ import           Cardano.Git.RevFromGit (gitRevFromGit)
++import           Cardano.Git.RevFromEnv (gitRevFromEnv)
+ 
+ gitRev :: Text
+ gitRev | gitRevEmbed /= zeroRev = gitRevEmbed
+-       | T.null fromGit         = zeroRev
+-       | otherwise              = fromGit
++       | not . T.null $ fromGit = fromGit
++       | not . T.null $ fromEnv = fromEnv
++       | otherwise              = zeroRev
+  where
+   -- Git revision embedded after compilation using
+   -- Data.FileEmbed.injectWith. If nothing has been injected,
+@@ -24,6 +26,9 @@
+   gitRevEmbed :: Text
+   gitRevEmbed = decodeUtf8 $(dummySpaceWith "gitrev" 40)
+ 
++  -- Get the git rev from the 'CN_GIT_COMMIT_REV' environment variable.
++  fromEnv = T.take 40 . T.strip $ (T.pack $(gitRevFromEnv))
++
+   -- Git revision found during compilation by running git. If
+   -- git could not be run, then this will be empty.
+ #if defined(arm_HOST_ARCH)
