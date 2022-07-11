@@ -5,7 +5,7 @@
 #
 %global debug_package %{nil}
 
-%global commit  82067b797c3f53a9d8adb982622ac58f9d675d24
+%global commit  9f1d7dc163ee66410d912e48509d6a2300cfa68a
 
 Name:           cardano-node
 Version:        1.35.0
