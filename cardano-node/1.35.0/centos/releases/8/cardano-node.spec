@@ -7,9 +7,6 @@
 
 %global commit  82067b797c3f53a9d8adb982622ac58f9d675d24
 
-%define original_tag %(printf %{version} | sed 's/~/-rc/')
-%define major_version %(printf %{version} | sed 's/~.*//')
-
 Name:           cardano-node
 Version:        1.35.0
 Release:        1%{?dist}
@@ -17,7 +14,7 @@ Summary:        The core component that is used to participate in a Cardano dece
 Group:          Applications/Communications
 ExclusiveArch:  %{_app_arch}
 
-Source0:        https://github.com/input-output-hk/cardano-node/archive/refs/tags/%{original_tag}.tar.gz
+Source0:        https://github.com/input-output-hk/cardano-node/archive/refs/tags/%{version}.tar.gz
 Patch1:         git-rev-commit-hash-env.patch
 Patch2:         wrong-version.patch
 
