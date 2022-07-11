@@ -16,7 +16,6 @@ ExclusiveArch:  %{_app_arch}
 
 Source0:        https://github.com/input-output-hk/cardano-node/archive/refs/tags/%{version}.tar.gz
 Patch1:         git-rev-commit-hash-env.patch
-Patch2:         wrong-version.patch
 
 License:        Apache License 2.0
 URL:            https://github.com/input-output-hk/cardano-node
@@ -54,7 +53,6 @@ The core component that is used to participate in a Cardano decentralised blockc
 %prep
 %setup -q -n %{name}-%{version}
 %patch1 -p1 -b .orig
-%patch2 -p1 -b .orig
 
 
 %build
