@@ -53,7 +53,7 @@ the core component that is used to participate in a Cardano decentralised blockc
 
 
 %prep
-%setup -q -n cardano-node-%{original_tag}
+%setup -q -n cardano-node-%{version}
 %patch1 -p1 -b .orig
 %patch2 -p1 -b .orig
 
