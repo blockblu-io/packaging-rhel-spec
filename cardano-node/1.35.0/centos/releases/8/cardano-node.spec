@@ -67,7 +67,7 @@ install -Dpm 0755 ./bin/%{name} %{buildroot}%{_bindir}/%{name}
 
 
 %check
-echo "$(%{buildroot}%{_bindir}/%{name} version)" | grep "cardano-node %{major_version}"
+echo "$(%{buildroot}%{_bindir}/%{name} version)" | grep "cardano-node %{version}"
 echo "$(%{buildroot}%{_bindir}/%{name} version)" | grep "git rev %{commit}"
 
 
